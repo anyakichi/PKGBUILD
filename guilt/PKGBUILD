@@ -1,0 +1,24 @@
+# Maintainer: INAJIMA Daisuke <inajima@sopht.jp>
+
+pkgname=guilt
+pkgver=0.36
+pkgrel=1
+pkgdesc='Git Quilt'
+arch=('i686' 'x86_64')
+url='http://guilt.31bits.net/'
+license=('GPL')
+depends=('bash' 'git')
+makedepends=('asciidoc' 'xmlto')
+source=($url/src/guilt-$pkgver.tar.gz)
+md5sums=('360b9d8354a7bb989c73a6f069146ccf')
+
+build () {
+	cd "$pkgname-$pkgver"
+	make doc
+}
+
+package() {
+	cd "$pkgname-$pkgver"
+	make install PREFIX=/usr DESTDIR=$pkgdir
+	make install-doc PREFIX=/usr DESTDIR=$pkgdir
+}
