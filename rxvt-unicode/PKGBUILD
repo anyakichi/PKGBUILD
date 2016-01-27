@@ -1,4 +1,4 @@
-# $Id: PKGBUILD 141615 2015-09-25 23:44:46Z seblu $
+# $Id: PKGBUILD 158991 2016-01-26 22:33:12Z seblu $
 # Maintainer: Sébastien Luttringer
 # Contributor: Angel Velasquez <angvp@archlinux.org>
 # Contributor: tobias <tobias@archlinux.org>
@@ -6,8 +6,8 @@
 
 pkgbase=rxvt-unicode
 pkgname=('rxvt-unicode' 'rxvt-unicode-terminfo')
-pkgver=9.21
-pkgrel=3
+pkgver=9.22
+pkgrel=1
 arch=('i686' 'x86_64')
 url='http://software.schmorp.de/pkg/rxvt-unicode.html'
 license=('GPL')
@@ -20,7 +20,7 @@ source=(
   'urxvtc.desktop'
   'urxvt-tabbed.desktop'
 )
-md5sums=('a9a06c608258c5fd247c3725d8f44582'
+md5sums=('93782dec27494eb079467dacf6e48185'
          '3d55054f2bc0a2f14f616fdf64ca5160'
          '7c9bdbb4d008a7a03c209d4557cc0fc7'
          'fec94dc986fa37ec380079d81de3e0b2'
