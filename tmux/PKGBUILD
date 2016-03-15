@@ -7,6 +7,7 @@ pkgname=tmux
 pkgver=2.1
 pkgrel=2
 pkgdesc='A terminal multiplexer'
+groups=('modified')
 url='http://tmux.github.io/'
 arch=('i686' 'x86_64')
 license=('BSD')
