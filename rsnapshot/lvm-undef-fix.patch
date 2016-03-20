@@ -1,0 +1,19 @@
+diff -aur rsnapshot-1.4.1.pristine/rsnapshot-program.pl rsnapshot-1.4.1.new/rsnapshot-program.pl
+--- rsnapshot-1.4.1.pristine/rsnapshot-program.pl	2015-11-08 17:41:24.998161558 +0900
++++ rsnapshot-1.4.1.new/rsnapshot-program.pl	2015-11-08 20:28:32.553861824 +0900
+@@ -3950,13 +3950,13 @@
+ 	# delte the traps manually
+ 	# umount LVM Snapshot if it is mounted
+ 	if (1 == $traps{"linux_lvm_mountpoint"}) {
+-		undef $traps{"linux_lvm_mountpoint"};
++		$traps{"linux_lvm_mountpoint"} = 0;
+ 		linux_lvm_unmount();
+ 	}
+ 
+ 	# destroy snapshot created by rsnapshot
+ 	if (0 ne $traps{"linux_lvm_snapshot"}) {
+-		undef $traps{"linux_lvm_snapshot"};
++		$traps{"linux_lvm_snapshot"} = 0;
+ 		linux_lvm_snapshot_del(linux_lvm_parseurl($lvm_src));
+ 	}
+ }
