@@ -1,10 +1,10 @@
-# $Id: PKGBUILD 171242 2016-04-17 08:59:45Z spupykin $
+# $Id: PKGBUILD 191063 2016-09-30 09:14:00Z spupykin $
 # Maintainer: Sergej Pupykin <pupykin.s+arch@gmail.com>
 # Maintainer:  TDY <tdy@gmx.com>
 # Contributor: Grigorios Bouzakis <grbzks[at]gmail[dot]com>
 
 pkgname=tmux
-pkgver=2.2
+pkgver=2.3
 pkgrel=1
 pkgdesc='A terminal multiplexer'
 groups=('modified')
@@ -15,7 +15,7 @@ depends=('ncurses' 'libevent' 'libutempter')
 source=(https://github.com/tmux/tmux/releases/download/$pkgver/tmux-$pkgver.tar.gz
 	no-utf8-acs.patch
 	LICENSE)
-md5sums=('bd95ee7205e489c62c616bb7af040099'
+md5sums=('fcfd1611d705d8b31df3c26ebc93bd3e'
          'be3ca799b1a9e345a749b2da04d93ac6'
          '71601bc37fa44e4395580b321963018e')
 
