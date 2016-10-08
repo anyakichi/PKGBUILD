@@ -3,11 +3,11 @@
 # Contributor: Maik Broemme <mbroemme@libmpq.org>
 
 pkgname=asterisk
-pkgver=13.7.2
-pkgrel=1
+pkgver=14.0.1
+pkgrel=2
 pkgdesc="A complete PBX solution"
 groups=('modified')
-arch=('i686' 'x86_64')
+arch=('i686' 'x86_64' 'armv7h')
 backup=('etc/asterisk/acl.conf'
 	'etc/asterisk/adsi.conf'
 	'etc/asterisk/agents.conf'
@@ -119,7 +119,7 @@ backup=('etc/asterisk/acl.conf'
 	'etc/asterisk/xmpp.conf')
 url="http://www.asterisk.org"
 license=('GPL')
-depends=('alsa-lib' 'speex' 'popt' 'libvorbis' 'curl' 'libxml2' 'jansson' 'libxslt' 'pjproject')
+depends=('alsa-lib' 'speex' 'popt' 'libvorbis' 'curl' 'libxml2' 'jansson' 'libxslt' 'pjproject' 'opus')
 makedepends=('sqlite3' 'gsm')
 optdepends=('lua51' 'libsrtp' 'postgresql' 'unixodbc' 'libpri' 'libss7' 'openr2' 'iksemel' 'radiusclient-ng' 'dahdi')
 source=(http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-${pkgver}.tar.gz \
@@ -128,11 +128,11 @@ source=(http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-$
 	${pkgname}.tmpfile \
 	menuselect.makeopts)
 install=${pkgname}.install
-sha256sums=('8a22856f0cff22b6f1d901eb0a91d459cd73f3ab1f71e9738b947428947fb232'
+sha256sums=('c66bc7b1dafac0259afeeaeae7b210723bc2a503465436ce601e41bd60b664b5'
             '94acb6e68424195a12fd9d406b3fb586f264a550e75801f6e020a86e800dd42c'
             'caa24cfec5c6b4f8cea385269e39557362acad7e2a552994c3bc24080e3bdd4e'
             '673c0c55bce8068c297f9cdd389402c2d5d5a25e2cf84732cb071198bd6fa78a'
-            'c67acfcf0a509d4ea1c963ab961281bfc93fa4a713a680f185e1f436b3a8d1c4')
+            'e4946190a3f8926fd72f2617ebb75ca150b7b37723fd4569d5ebca2d28ac210c')
 
 prepare() {
   cp menuselect.makeopts ${srcdir}/${pkgname}-${pkgver}
@@ -140,7 +140,7 @@ prepare() {
 
 build() {
   cd ${srcdir}/${pkgname}-${pkgver}
-  ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --sbindir=/usr/bin
+  ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --sbindir=/usr/bin #--with-pjproject-bundled
   make
 }
 
