@@ -1,7 +1,17 @@
-diff -aur rsnapshot-1.4.1.pristine/rsnapshot-program.pl rsnapshot-1.4.1.new/rsnapshot-program.pl
---- rsnapshot-1.4.1.pristine/rsnapshot-program.pl	2015-11-08 17:41:24.998161558 +0900
-+++ rsnapshot-1.4.1.new/rsnapshot-program.pl	2015-11-08 17:58:19.544076770 +0900
-@@ -155,6 +155,7 @@
+commit 03b5007f4b234dce5c4b89dd8152bd289d84ee83
+Author: INAJIMA Daisuke <inajima@sopht.jp>
+Date:   Fri Aug 19 10:31:24 2016 +0900
+
+    Add mount_args parameter
+    
+    This option is used for the mount command when an LVM snapshot volume is
+    mounted.
+
+diff --git a/rsnapshot-program.pl b/rsnapshot-program.pl
+index a131517..2c157aa 100755
+--- a/rsnapshot-program.pl
++++ b/rsnapshot-program.pl
+@@ -155,6 +155,7 @@ my $default_rsync_short_args = '-a';
  my $default_rsync_long_args  = '--delete --numeric-ids --relative --delete-excluded';
  my $default_ssh_args         = undef;
  my $default_du_args          = '-csh';
@@ -9,7 +19,7 @@ diff -aur rsnapshot-1.4.1.pristine/rsnapshot-program.pl rsnapshot-1.4.1.new/rsna
  
  # set default for use_lazy_deletes
  my $use_lazy_deletes = 0;    # do not delete the oldest archive until after backup
-@@ -1380,6 +1381,13 @@
+@@ -1402,6 +1403,13 @@ sub parse_config_file {
  			next;
  		}
  
@@ -20,10 +30,10 @@ diff -aur rsnapshot-1.4.1.pristine/rsnapshot-program.pl rsnapshot-1.4.1.new/rsna
 +			next;
 +		}
 +
- 		# SSH ARGS
- 		if ($var eq 'ssh_args') {
- 			if (!defined($default_ssh_args) && defined($config_vars{'ssh_args'})) {
-@@ -1831,6 +1839,12 @@
+ 		# LVM CMDS
+ 		if ($var =~ m/^linux_lvm_cmd_(lvcreate|mount)$/) {
+ 			$config_vars{$var} = $value;
+@@ -1839,6 +1847,12 @@ sub parse_backup_opts {
  
  			# pass unchecked
  
@@ -33,10 +43,10 @@ diff -aur rsnapshot-1.4.1.pristine/rsnapshot-program.pl rsnapshot-1.4.1.new/rsna
 +
 +			# pass unchecked
 +
- 			# ssh_args
+ 			# lvm args
  		}
- 		elsif ($name eq 'ssh_args') {
-@@ -3572,6 +3586,7 @@
+ 		elsif ($name =~ m/^linux_lvm_(vgpath|snapshotname|snapshotsize|mountpath)$/) {
+@@ -3574,6 +3588,7 @@ sub rsync_backup_point {
  	my $ssh_args         = $default_ssh_args;
  	my $rsync_short_args = $default_rsync_short_args;
  	my $rsync_long_args  = $default_rsync_long_args;
@@ -44,32 +54,32 @@ diff -aur rsnapshot-1.4.1.pristine/rsnapshot-program.pl rsnapshot-1.4.1.new/rsna
  
  	# other misc variables
  	my @cmd_stack = undef;
-@@ -3651,6 +3666,9 @@
- 	if (defined($config_vars{'rsync_long_args'})) {
- 		$rsync_long_args = $config_vars{'rsync_long_args'};
+@@ -3656,6 +3671,9 @@ sub rsync_backup_point {
+ 	if (defined($config_vars{'ssh_args'})) {
+ 		$ssh_args = $config_vars{'ssh_args'};
  	}
 +	if (defined($config_vars{'mount_args'})) {
 +		$mount_args = $config_vars{'mount_args'};
 +	}
- 	if (defined($config_vars{'ssh_args'})) {
- 		$ssh_args = $config_vars{'ssh_args'};
- 	}
-@@ -3662,6 +3680,7 @@
+ 
+ 	# extra verbose?
+ 	if ($verbose > 3) { $rsync_short_args .= 'v'; }
+@@ -3664,6 +3682,7 @@ sub rsync_backup_point {
  	# quoting - ideally we'd use Text::Balanced or similar, but that's
  	# only relatively recently gone into core
  	my @rsync_long_args_stack = split_long_args_with_quotes('rsync_long_args', $rsync_long_args);
-+	my @mount_args_stack = split_long_args_with_quotes('mount_args', $mount_args);
++	my @mount_args_stack      = split_long_args_with_quotes('mount_args',      $mount_args);
  
  	# create $interval.0/$$bp_ref{'dest'} or .sync/$$bp_ref{'dest'} directory if it doesn't exist
  	# (this may create the .sync dir, which is why we had to check for it above)
-@@ -3701,6 +3720,21 @@
+@@ -3703,6 +3722,21 @@ sub rsync_backup_point {
  		);
  	}
  
 +	# MOUNT ARGS
 +	if (defined($$bp_ref{'opts'}) && defined($$bp_ref{'opts'}->{'mount_args'})) {
-+		@mount_args_stack = split_long_args_with_quotes('mount_args (for a backup point)',
-+			$$bp_ref{'opts'}->{'mount_args'});
++		@mount_args_stack =
++		  split_long_args_with_quotes('mount_args (for a backup point)', $$bp_ref{'opts'}->{'mount_args'});
 +	}
 +	if (defined($$bp_ref{'opts'}) && defined($$bp_ref{'opts'}->{'extra_mount_args'})) {
 +		push(
@@ -84,7 +94,7 @@ diff -aur rsnapshot-1.4.1.pristine/rsnapshot-program.pl rsnapshot-1.4.1.new/rsna
  	# SSH ARGS
  	if (defined($$bp_ref{'opts'}) && defined($$bp_ref{'opts'}->{'ssh_args'})) {
  		$ssh_args = $$bp_ref{'opts'}->{'ssh_args'};
-@@ -3778,7 +3812,7 @@
+@@ -3780,7 +3814,7 @@ sub rsync_backup_point {
  
  		linux_lvm_snapshot_create(linux_lvm_parseurl($lvm_src));
  		$traps{"linux_lvm_snapshot"} = $lvm_src;
@@ -93,7 +103,7 @@ diff -aur rsnapshot-1.4.1.pristine/rsnapshot-program.pl rsnapshot-1.4.1.new/rsna
  		$traps{"linux_lvm_mountpoint"} = 1;
  
  		# rewrite src to point to mount path
-@@ -4069,7 +4103,7 @@
+@@ -4066,7 +4100,7 @@ sub linux_lvm_mount {
  
  	my $result = undef;
  
@@ -102,18 +112,33 @@ diff -aur rsnapshot-1.4.1.pristine/rsnapshot-program.pl rsnapshot-1.4.1.new/rsna
  	unless (defined($linux_lvmvgname) and defined($linux_lvmvolname) and defined($linux_lvmpath)) {
  		bail("linux_lvm_mount needs 3 parameters!");
  	}
-@@ -4078,6 +4112,14 @@
+@@ -4075,6 +4109,14 @@ sub linux_lvm_mount {
  	my @cmd_stack = ();
  	push(@cmd_stack, split(' ', $config_vars{'linux_lvm_cmd_mount'}));
  
-+        if (@$mount_args_stack && (scalar(@$mount_args_stack) > 0)) {
-+            foreach my $tmp_arg (@$mount_args_stack) {
-+                if (defined($tmp_arg) && ($tmp_arg ne '')) {
-+                    push(@cmd_stack, $tmp_arg);
-+                }
-+            }
-+        }
++	if (@$mount_args_stack && (scalar(@$mount_args_stack) > 0)) {
++		foreach my $tmp_arg (@$mount_args_stack) {
++			if (defined($tmp_arg) && ($tmp_arg ne '')) {
++				push(@cmd_stack, $tmp_arg);
++			}
++		}
++	}
 +
  	push(
  		@cmd_stack,
  		join('/',
+@@ -6988,6 +7030,14 @@ features.
+ 
+ =back
+ 
++B<mount_args  -o offset=1048576>
++
++=over 4
++
++Arguments to be passed to mount. If not specified, the default is none.
++
++=back
++
+ B<lockfile    /var/run/rsnapshot.pid>
+ 
+ B<stop_on_stale_lockfile	0>
