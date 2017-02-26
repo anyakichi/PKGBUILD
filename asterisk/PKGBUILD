@@ -3,8 +3,8 @@
 # Contributor: Maik Broemme <mbroemme@libmpq.org>
 
 pkgname=asterisk
-pkgver=14.0.1
-pkgrel=2
+pkgver=14.2.1
+pkgrel=1
 pkgdesc="A complete PBX solution"
 groups=('modified')
 arch=('i686' 'x86_64' 'armv7h')
@@ -128,11 +128,11 @@ source=(http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-$
 	${pkgname}.tmpfile \
 	menuselect.makeopts)
 install=${pkgname}.install
-sha256sums=('c66bc7b1dafac0259afeeaeae7b210723bc2a503465436ce601e41bd60b664b5'
+sha256sums=('b28b5131233db6c89bb3356c703033ec8a393ae378e4aae169993b60a5877ea4'
             '94acb6e68424195a12fd9d406b3fb586f264a550e75801f6e020a86e800dd42c'
             'caa24cfec5c6b4f8cea385269e39557362acad7e2a552994c3bc24080e3bdd4e'
             '673c0c55bce8068c297f9cdd389402c2d5d5a25e2cf84732cb071198bd6fa78a'
-            'e4946190a3f8926fd72f2617ebb75ca150b7b37723fd4569d5ebca2d28ac210c')
+            '53eab34352df2e3dcda737bd195290ca3b5b1aac5facb002d492e4221cb81432')
 
 prepare() {
   cp menuselect.makeopts ${srcdir}/${pkgname}-${pkgver}
@@ -140,7 +140,7 @@ prepare() {
 
 build() {
   cd ${srcdir}/${pkgname}-${pkgver}
-  ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --sbindir=/usr/bin #--with-pjproject-bundled
+  ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --sbindir=/usr/bin --with-libedit=internal
   make
 }
 
