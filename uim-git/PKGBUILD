@@ -36,7 +36,9 @@ prepare() {
 build() {
   cd ${srcdir}/${_pkgname}
 
-  ./make-wc.sh --prefix=/usr --libexecdir=/usr/lib/uim
+  ./make-wc.sh --prefix=/usr --libexecdir=/usr/lib/uim \
+      --with-qt4 --with-qt4-immodule \
+      --with-qt5 --with-qt5-immodule
   make
 }
 
