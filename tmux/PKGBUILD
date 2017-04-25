@@ -1,10 +1,10 @@
-# $Id: PKGBUILD 191063 2016-09-30 09:14:00Z spupykin $
+# $Id: PKGBUILD 225130 2017-04-24 13:12:33Z spupykin $
 # Maintainer: Sergej Pupykin <pupykin.s+arch@gmail.com>
 # Maintainer:  TDY <tdy@gmx.com>
 # Contributor: Grigorios Bouzakis <grbzks[at]gmail[dot]com>
 
 pkgname=tmux
-pkgver=2.3
+pkgver=2.4
 pkgrel=1
 pkgdesc='A terminal multiplexer'
 groups=('modified')
@@ -15,9 +15,9 @@ depends=('ncurses' 'libevent' 'libutempter')
 source=(https://github.com/tmux/tmux/releases/download/$pkgver/tmux-$pkgver.tar.gz
 	no-utf8-acs.patch
 	LICENSE)
-md5sums=('fcfd1611d705d8b31df3c26ebc93bd3e'
-         'be3ca799b1a9e345a749b2da04d93ac6'
-         '71601bc37fa44e4395580b321963018e')
+sha256sums=('757d6b13231d0d9dd48404968fc114ac09e005d475705ad0cd4b7166f799b349'
+            '3865d6c5a9293a4e1e388dc4ccee37ea56f0088666bf3d68d1209505f48fdb5d'
+            'b5de80619e4884ced2dfe0a96020e85dcfb715a831ecdfdd7ce8c97b5a6ff2cc')
 
 prepare() {
 	cd "$srcdir/$pkgname-${pkgver/_/}"
@@ -32,6 +32,6 @@ build() {
 
 package() {
 	cd "$srcdir/$pkgname-${pkgver/_/}"
-	make install DESTDIR=$pkgdir
-	install -Dm644 $srcdir/LICENSE "$pkgdir/usr/share/licenses/tmux/LICENSE"
+	make install DESTDIR="$pkgdir"
+	install -Dm644 "$srcdir"/LICENSE "$pkgdir/usr/share/licenses/tmux/LICENSE"
 }

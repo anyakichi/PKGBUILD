@@ -37,14 +37,14 @@
  		if (tty->term->acs[ch][0] == '\0')
  			return (NULL);
  		return (&tty->term->acs[ch][0]);
---- tty.c.orig	2015-09-27 18:51:49.000000000 +0900
-+++ tty.c	2015-10-24 13:40:22.733122271 +0900
-@@ -54,7 +54,7 @@
- void	tty_default_colours(struct grid_cell *, const struct window_pane *);
+--- tty.c.orig	2017-04-25 12:20:21.461598065 +0900
++++ tty.c	2017-04-25 12:22:02.828602056 +0900
+@@ -72,7 +72,7 @@
+ 		    u_int);
  
  #define tty_use_acs(tty) \
 -	(tty_term_has((tty)->term, TTYC_ACSC) && !((tty)->flags & TTY_UTF8))
 +	(tty_term_has((tty)->term, TTYC_ACSC) && !((tty)->flags & TTY_UTF8_ACS))
+ #define tty_use_margin(tty) \
+ 	((tty)->term_type == TTY_VT420)
  
- #define tty_pane_full_width(tty, ctx) \
- 	((ctx)->xoff == 0 && screen_size_x((ctx)->wp->screen) >= (tty)->sx)
