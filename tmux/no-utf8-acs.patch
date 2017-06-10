@@ -16,16 +16,16 @@
  	tty_resize(&c->tty);
  
  	if (!(c->flags & CLIENT_CONTROL))
---- tmux.h.orig	2015-09-27 18:51:49.000000000 +0900
-+++ tmux.h	2015-10-24 13:26:39.745796432 +0900
-@@ -1118,6 +1118,7 @@
- #define TTY_STARTED 0x10
+--- tmux.h.orig	2017-05-31 18:31:09.560332826 +0900
++++ tmux.h	2017-05-31 18:31:13.870207322 +0900
+@@ -1075,6 +1075,7 @@
  #define TTY_OPENED 0x20
  #define TTY_FOCUS 0x40
+ #define TTY_BLOCK 0x80
 +#define TTY_UTF8_ACS 0x8000
  	int		 flags;
  
- 	int		 term_flags;
+ 	struct tty_term	*term;
 --- tty-acs.c.orig	2014-11-21 05:44:57.000000000 +0900
 +++ tty-acs.c	2015-10-22 21:23:38.934933019 +0900
 @@ -81,7 +81,7 @@
