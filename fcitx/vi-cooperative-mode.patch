@@ -1,6 +1,6 @@
 diff -ur fcitx-4.2.9.7/src/lib/fcitx/ime.c fcitx-4.2.9.7.new/src/lib/fcitx/ime.c
 --- fcitx-4.2.9.7/src/lib/fcitx/ime.c	2019-11-07 17:13:07.000000000 +0900
-+++ fcitx-4.2.9.7.new/src/lib/fcitx/ime.c	2020-04-26 09:38:43.820933996 +0900
++++ fcitx-4.2.9.7.new/src/lib/fcitx/ime.c	2020-04-26 11:37:36.569005560 +0900
 @@ -599,7 +599,12 @@
  
  INPUT_RETURN_VALUE _DoDeactivate(FcitxInstance* instance)
@@ -33,9 +33,9 @@ diff -ur fcitx-4.2.9.7/src/lib/fcitx/ime.c fcitx-4.2.9.7.new/src/lib/fcitx/ime.c
                  if (!HAVE_IM) {
                      break;
                  }
-+                if ((sym == FcitxKey_Escape && state == FcitxKeyState_None) ||
-+                    (sym == FcitxKey_bracketleft && state == FcitxKeyState_Ctrl &&
-+                     _CheckDeactivate(instance))) {
++                if (((sym == FcitxKey_Escape && state == FcitxKeyState_None) ||
++                     (sym == FcitxKey_bracketleft && state == FcitxKeyState_Ctrl)) &&
++                    _CheckDeactivate(instance)) {
 +                    retVal = _DoDeactivate(instance);
 +                    /* force pass through */
 +                    retVal = IRV_TO_PROCESS;

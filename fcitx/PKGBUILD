@@ -27,7 +27,7 @@ source=("https://download.fcitx-im.org/$pkgname/$pkgname-${pkgver}_dict.tar.xz"{
         vi-cooperative-mode.patch)
 sha512sums=('b940478c648e30b2ea55903465ed02c8a0c3ae3539e4bd5b77be46a9e4d0c13ceff074ddd7532f86893111eb96308e1740db621a83fb809e4fd02256d75ebe7b'
             'SKIP'
-            'ea7480980b5b7c7a16cec98c61d32dc72c9549bb1d998d657d9a9aae4cacd6420c77cd7648996b6ec75f48ca849bc34fb467af5aad3afe3b37e656099deb6e6d')
+            '69882cbee214d0a64c5e2f9960291adb2c837415ba2672db3db735ce553a9ac18bfbb0db5b9940106cb7cd717e22435af099b0137ff9e5e598b0dd93dcbf0c76')
 validpgpkeys=('2CC8A0609AD2A479C65B6D5C8E8B898CBF2412F9')  # Weng Xuetian
 
 prepare() {
