@@ -1,0 +1,11 @@
+diff -ur vte-ng.orig/src/vte.cc vte-ng/src/vte.cc
+--- vte-ng.orig/src/vte.cc	2020-04-25 11:25:31.795323157 +0900
++++ vte-ng/src/vte.cc	2020-04-25 11:25:44.394761694 +0900
+@@ -106,6 +106,7 @@
+ {
+         if (G_LIKELY (c < 0x80))
+                 return 1;
++	return wcwidth(c);
+         if (G_UNLIKELY (g_unichar_iszerowidth (c)))
+                 return 0;
+         if (G_UNLIKELY (g_unichar_iswide (c)))

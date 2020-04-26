@@ -1,0 +1,74 @@
+# Maintainer: Jelle van der Waa <jelle@archlinux.org>
+# Contributor: Daniel Micay <danielmicay@gmail.com>
+
+pkgbase=termite
+pkgname=('termite' 'termite-terminfo')
+pkgver=15
+pkgrel=1
+pkgdesc="A simple VTE-based terminal"
+groups=('modified')
+url="https://github.com/thestinger/termite/"
+license=('LGPL')
+arch=('x86_64')
+depends=('gtk3' 'pcre2' 'gnutls' 'vte-common')
+makedepends=('git' 'ncurses' 'intltool' 'gperf' 'gtk-doc')
+_vtever=0.56.2.a
+source=("git+https://github.com/thestinger/termite#tag=v$pkgver"
+        "git+https://github.com/thestinger/vte-ng#tag=$_vtever"
+        "termite-util::git+https://github.com/thestinger/util"
+        font-scale.patch
+        wcwidth.patch)
+sha256sums=('SKIP'
+            'SKIP'
+            'SKIP'
+            'e43012e532eed586d3d63e9877009f6561fb84134e39fca9feceaf6164ce7c95'
+            'f1259981ff72ce24ca4873f198b1467e39cf36eaf24d319ab5b95b6ade41bfe6')
+
+prepare() {
+  cd vte-ng
+  patch -Np1 -i ../wcwidth.patch
+  echo 'sources: $(BUILT_SOURCES)' >> src/Makefile.am 
+  NOCONFIGURE=1 ./autogen.sh
+
+  cd ../$pkgbase
+  patch -Np1 -i ../font-scale.patch
+  git submodule init
+  git config --local submodule.util.url "$srcdir/termite-util"
+  git submodule update
+}
+
+build() {
+  cd vte-ng
+  ./configure \
+    --prefix="$srcdir/vte-static" \
+    --localedir="/usr/share/$pkgbase/locale" \
+    --enable-static \
+    --disable-shared \
+    enable_introspection=no \
+    enable_vala=no \
+    --disable-gtk-doc \
+    --disable-glade-catalogue
+  make -C src sources install-exec install-data -j 1 # makefile bug does not allow -j
+  make install-pkgconfigDATA
+
+  cd ../$pkgbase
+  export PKG_CONFIG_PATH="$srcdir/vte-static/lib/pkgconfig"
+  make
+}
+
+package_termite() {
+  depends+=('termite-terminfo')
+  backup=(etc/xdg/termite/config)
+
+  make -C vte-ng/po DESTDIR="$pkgdir" install-data
+  make -C $pkgbase DESTDIR="$pkgdir" PREFIX=/usr install
+  rm -r "$pkgdir/usr/share/terminfo"
+}
+
+package_termite-terminfo() {
+  pkgdesc='Terminfo for Termite, a simple VTE-based terminal'
+  depends=('ncurses')
+
+  mkdir -p "$pkgdir/usr/share/terminfo"
+  tic -x -o "$pkgdir/usr/share/terminfo" $pkgbase/termite.terminfo
+}
