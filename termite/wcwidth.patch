@@ -1,11 +1,26 @@
-diff -ur vte-ng.orig/src/vte.cc vte-ng/src/vte.cc
---- vte-ng.orig/src/vte.cc	2020-04-25 11:25:31.795323157 +0900
-+++ vte-ng/src/vte.cc	2020-04-25 11:25:44.394761694 +0900
-@@ -106,6 +106,7 @@
+diff -ur vte-ng/src/vte.cc vte-ng.new/src/vte.cc
+--- vte-ng/src/vte.cc	2020-04-27 15:11:04.541472131 +0900
++++ vte-ng.new/src/vte.cc	2020-04-27 15:14:22.143217877 +0900
+@@ -104,17 +104,13 @@
+ static int
+ _vte_unichar_width(gunichar c, int utf8_ambiguous_width)
  {
++	int width;
          if (G_LIKELY (c < 0x80))
                  return 1;
-+	return wcwidth(c);
-         if (G_UNLIKELY (g_unichar_iszerowidth (c)))
-                 return 0;
-         if (G_UNLIKELY (g_unichar_iswide (c)))
+-        if (G_UNLIKELY (g_unichar_iszerowidth (c)))
+-                return 0;
+-        if (G_UNLIKELY (g_unichar_iswide (c)))
+-                return 2;
+-        if (G_LIKELY (utf8_ambiguous_width == 1))
+-                return 1;
+-        if (G_UNLIKELY (g_unichar_iswide_cjk (c)))
+-                return 2;
+-        return 1;
++	width = wcwidth(c);
++	if (width < 0)
++		return 1;
++	return width;
+ }
+ 
+ static void

@@ -22,7 +22,7 @@ sha256sums=('SKIP'
             'SKIP'
             'SKIP'
             'e43012e532eed586d3d63e9877009f6561fb84134e39fca9feceaf6164ce7c95'
-            'f1259981ff72ce24ca4873f198b1467e39cf36eaf24d319ab5b95b6ade41bfe6')
+            '0f03da62ce932613e3d1d456e3f91be6162a06803496c451936eee99ec713233')
 
 prepare() {
   cd vte-ng
