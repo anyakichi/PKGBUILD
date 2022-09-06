@@ -2,8 +2,8 @@
 # Contributor: csslayer <wengxt AT gmail com>
 
 pkgname=fcitx5
-pkgver=5.0.16
-pkgrel=1
+pkgver=5.0.18
+pkgrel=2
 pkgdesc="Next generation of fcitx"
 arch=('x86_64')
 url="https://github.com/fcitx/fcitx5"
@@ -14,11 +14,12 @@ depends=('cairo' 'enchant' 'iso-codes' 'libgl' 'libxkbcommon-x11' 'pango' 'syste
          'wayland-protocols' 'xcb-imdkit' 'xcb-util-wm' 'libxkbfile' 'fmt' 'gdk-pixbuf2'
          'unicode-cldr-annotations')
 makedepends=('extra-cmake-modules' 'ninja')
+options=('debug')
 source=("https://download.fcitx-im.org/fcitx5/fcitx5/fcitx5-${pkgver}_dict.tar.xz"{,.sig}
         vi-cooperative-mode.patch)
-sha512sums=('fd237c04fb085b3997aabb96b23db27948af68367f57ad2a89a56a7f46410bcd87f0c22e58e4cc9d9de170360ff7b2e533f375d2378d1673e10fed8fc295b0fa'
+sha512sums=('a03cd2b8c556fe26470869a624061cc33ac7c6f19be0ba7e01b17c3e7866dee07dc7fed95b2376d670193ed67258abfba8914279ad23507b55312fd48a486be0'
             'SKIP'
-            '208f8fed4d480b05919ef5fd01edcbc6ad70e36cd058877bea981812395095383604870f8aa3d24ceff8e29e18ce1884bcc598ba39fdc5002ea4b2c94fb38910')
+            'a9d63dcfad9349755393a94ea163137c383338db5281d5f002abf99ebb7a71534e4c524b3a9ac6673eeb2f2aa65a55e7301a04f49b75745f88fb21410839a90c')
 validpgpkeys=('2CC8A0609AD2A479C65B6D5C8E8B898CBF2412F9') # Weng Xuetian <wengxt@gmail.com>
 
 prepare() {
