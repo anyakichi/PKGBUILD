@@ -1,17 +1,19 @@
 diff --git a/client.c b/client.c
-index 6954d17e..b14bbdf8 100644
+index 99c7c1e8..8bf67965 100644
 --- a/client.c
 +++ b/client.c
-@@ -66,12 +66,13 @@ static const char *
- version_and_features(void)
+@@ -67,14 +67,15 @@ version_and_features(void)
  {
      static char buf[256];
--    snprintf(buf, sizeof(buf), "version: %s %cpgo %cime %cgraphemes %cassertions",
-+    snprintf(buf, sizeof(buf), "version: %s %cpgo %cime %cgraphemes %cassertions %cucurl",
+     snprintf(buf, sizeof(buf),
+-             "version: %s %cpgo %cime %cgraphemes %cfractional-scaling %ccursor-shape %cassertions",
++             "version: %s %cpgo %cime %cgraphemes %cfractional-scaling %ccursor-shape %cassertions %cucurl",
               FOOT_VERSION,
               feature_pgo() ? '+' : '-',
               feature_ime() ? '+' : '-',
               feature_graphemes() ? '+' : '-',
+              feature_fractional_scaling() ? '+' : ':',
+              feature_cursor_shape() ? '+' : '-',
 -             feature_assertions() ?  '+' : '-');
 +             feature_assertions() ?  '+' : '-',
 +             feature_ext_underline() ?  '+' : '-');
@@ -19,7 +21,7 @@ index 6954d17e..b14bbdf8 100644
  }
  
 diff --git a/csi.c b/csi.c
-index d22c1da5..a8f8216b 100644
+index 153a1099..3d6b0854 100644
 --- a/csi.c
 +++ b/csi.c
 @@ -88,17 +88,44 @@ csi_sgr(struct terminal *term)
@@ -111,7 +113,7 @@ index d22c1da5..a8f8216b 100644
          case 40:
          case 41:
 diff --git a/doc/foot-ctlseqs.7.scd b/doc/foot-ctlseqs.7.scd
-index ec970127..884269d8 100644
+index 3fa03158..18ba353b 100644
 --- a/doc/foot-ctlseqs.7.scd
 +++ b/doc/foot-ctlseqs.7.scd
 @@ -159,6 +159,8 @@ m*.
@@ -134,7 +136,7 @@ index ec970127..884269d8 100644
  |  90-97
  :  Select foreground color (using *brightN* in *foot.ini*(5))
  |  100-107
-@@ -587,6 +593,35 @@ manipulation sequences. The generic format is:
+@@ -591,6 +597,35 @@ manipulation sequences. The generic format is:
  :  <unnamed>
  :  kitty
  :  Update current Kitty keyboard flags, according to _mode_.
@@ -171,36 +173,38 @@ index ec970127..884269d8 100644
  
  # OSC
 diff --git a/foot-features.h b/foot-features.h
-index ad447767..8af919f2 100644
+index f8043c12..72b13244 100644
 --- a/foot-features.h
 +++ b/foot-features.h
-@@ -37,3 +37,12 @@ static inline bool feature_graphemes(void)
+@@ -55,3 +55,12 @@ static inline bool feature_cursor_shape(void)
      return false;
  #endif
  }
 +
 +static inline bool feature_ext_underline(void)
 +{
-+#if FOOT_EXT_UNDERLINE
++#if defined(FOOT_EXT_UNDERLINE) && FOOT_EXT_UNDERLINE
 +    return true;
 +#else
 +    return false;
 +#endif
 +}
 diff --git a/main.c b/main.c
-index 4af200fd..de1cfb3e 100644
+index fc329574..8fb59df5 100644
 --- a/main.c
 +++ b/main.c
-@@ -52,12 +52,13 @@ static const char *
- version_and_features(void)
+@@ -53,14 +53,15 @@ version_and_features(void)
  {
      static char buf[256];
--    snprintf(buf, sizeof(buf), "version: %s %cpgo %cime %cgraphemes %cassertions",
-+    snprintf(buf, sizeof(buf), "version: %s %cpgo %cime %cgraphemes %cassertions %cucurl",
+     snprintf(buf, sizeof(buf),
+-             "version: %s %cpgo %cime %cgraphemes %cfractional-scaling %ccursor-shape %cassertions",
++             "version: %s %cpgo %cime %cgraphemes %cfractional-scaling %ccursor-shape %cassertions %cucurl",
               FOOT_VERSION,
               feature_pgo() ? '+' : '-',
               feature_ime() ? '+' : '-',
               feature_graphemes() ? '+' : '-',
+              feature_fractional_scaling() ? '+' : '-',
+              feature_cursor_shape() ? '+' : '-',
 -             feature_assertions() ? '+' : '-');
 +             feature_assertions() ? '+' : '-',
 +             feature_ext_underline() ? '+' : '-');
@@ -208,10 +212,10 @@ index 4af200fd..de1cfb3e 100644
  }
  
 diff --git a/meson.build b/meson.build
-index 6e7e7fcf..3ab8c49a 100644
+index 1a00153c..09696822 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -52,7 +52,10 @@ add_project_arguments(
+@@ -76,7 +76,10 @@ add_project_arguments(
    cc.get_supported_arguments(
      ['-pedantic',
       '-fstrict-aliasing',
@@ -224,18 +228,18 @@ index 6e7e7fcf..3ab8c49a 100644
  )
  
 diff --git a/meson_options.txt b/meson_options.txt
-index c38a8ca8..a374d63c 100644
+index d16e23ae..94eccb90 100644
 --- a/meson_options.txt
 +++ b/meson_options.txt
-@@ -24,3 +24,6 @@ option('systemd-units-dir', type: 'string', value: '',
- 
- option('default-utempter-path', type: 'string', value: '',
-        description: 'Default path to utempter helper binary. Default: auto-detect')
+@@ -26,3 +26,6 @@ option('utmp-backend', type: 'combo', value: 'auto', choices: ['none', 'libutemp
+        description: 'Which utmp logging backend to use. This affects how (with what arguments) the utmp helper binary (see \'utmp-default-helper-path\')is called. Default: auto (linux=libutempter, freebsd=ulog, others=none)')
+ option('utmp-default-helper-path', type: 'string', value: 'auto',
+        description: 'Default path to the utmp helper binary. Default: auto-detect')
 +
 +option('ext-underline', type: 'boolean', value: false,
 +      description: 'Enable underline styles & colors from xterm-kitty')
 diff --git a/render.c b/render.c
-index f16898b4..e92247b4 100644
+index 677856d8..9f7a1f0a 100644
 --- a/render.c
 +++ b/render.c
 @@ -4,6 +4,7 @@
@@ -246,7 +250,7 @@ index f16898b4..e92247b4 100644
  
  #include <sys/ioctl.h>
  #include <sys/time.h>
-@@ -387,6 +388,103 @@ draw_underline(const struct terminal *term, pixman_image_t *pix,
+@@ -388,6 +389,103 @@ draw_underline(const struct terminal *term, pixman_image_t *pix,
              x, y + y_ofs, cols * term->cell_width, thickness});
  }
  
@@ -350,7 +354,7 @@ index f16898b4..e92247b4 100644
  static void
  draw_strikeout(const struct terminal *term, pixman_image_t *pix,
                 const struct fcft_font *font,
-@@ -489,12 +587,18 @@ render_cell(struct terminal *term, pixman_image_t *pix,
+@@ -482,12 +580,18 @@ render_cell(struct terminal *term, pixman_image_t *pix,
  
      uint32_t _fg = 0;
      uint32_t _bg = 0;
@@ -369,7 +373,7 @@ index f16898b4..e92247b4 100644
      } else {
          /* Use cell specific color, if set, otherwise the default colors (possible reversed) */
          switch (cell->attrs.fg_src) {
-@@ -529,6 +633,24 @@ render_cell(struct terminal *term, pixman_image_t *pix,
+@@ -522,6 +626,24 @@ render_cell(struct terminal *term, pixman_image_t *pix,
              break;
          }
  
@@ -394,7 +398,7 @@ index f16898b4..e92247b4 100644
          if (cell->attrs.reverse ^ is_selected) {
              uint32_t swap = _fg;
              _fg = _bg;
-@@ -553,6 +675,9 @@ render_cell(struct terminal *term, pixman_image_t *pix,
+@@ -546,6 +668,9 @@ render_cell(struct terminal *term, pixman_image_t *pix,
  
      pixman_color_t fg = color_hex_to_pixman(_fg);
      pixman_color_t bg = color_hex_to_pixman_with_alpha(_bg, alpha);
@@ -404,22 +408,21 @@ index f16898b4..e92247b4 100644
  
      struct fcft_font *font = attrs_to_font(term, &cell->attrs);
      const struct composed *composed = NULL;
-@@ -800,8 +925,13 @@ render_cell(struct terminal *term, pixman_image_t *pix,
+@@ -793,6 +918,12 @@ render_cell(struct terminal *term, pixman_image_t *pix,
      pixman_image_unref(clr_pix);
  
      /* Underline */
 +#if FOOT_EXT_UNDERLINE
-+    draw_ext_underline(term, pix, font, &ul, cell->attrs.ul_style,
-+                       x, y, cell_cols);
-+#else
++    if (cell->attrs.ul_style != UNDERLINE_NONE) {
++        draw_ext_underline(term, pix, font, &ul, cell->attrs.ul_style,
++                        x, y, cell_cols);
++    } else
++#endif
      if (cell->attrs.underline)
          draw_underline(term, pix, font, &fg, x, y, cell_cols);
-+#endif
  
-     if (cell->attrs.strikethrough)
-         draw_strikeout(term, pix, font, &fg, x, y, cell_cols);
 diff --git a/terminal.h b/terminal.h
-index d2762a5a..6e8a0209 100644
+index 6dace7ac..656a5fd6 100644
 --- a/terminal.h
 +++ b/terminal.h
 @@ -31,6 +31,17 @@ enum color_source {
