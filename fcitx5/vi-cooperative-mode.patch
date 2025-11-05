@@ -1,6 +1,6 @@
---- fcitx5-5.0.17/src/lib/fcitx/instance.cpp.orig	2022-06-02 03:50:52.000000000 +0900
-+++ fcitx5-5.0.17/src/lib/fcitx/instance.cpp	2022-06-04 14:24:25.743909895 +0900
-@@ -403,6 +403,9 @@
+--- fcitx5/src/lib/fcitx/instance.cpp.orig	2025-10-26 15:36:21.596859757 +0900
++++ fcitx5/src/lib/fcitx/instance.cpp	2025-10-26 15:40:46.719904228 +0900
+@@ -456,6 +456,9 @@
      if (!q->canTrigger()) {
          return false;
      }
@@ -10,20 +10,18 @@
      auto *inputState = ic->propertyFor(&inputStateFactory_);
      return inputState->isActive();
  }
-@@ -784,6 +787,12 @@
+@@ -854,6 +857,10 @@
                          if (origKey.hasModifier()) {
                              inputState->totallyReleased_ = false;
                          }
-+
 +                        if ((keyEvent.origKey().states().test(KeyState::NoState) && keyEvent.origKey().sym() == FcitxKey_Escape) ||
 +                            (keyEvent.origKey().states().test(KeyState::Ctrl) && keyEvent.origKey().sym() == FcitxKey_bracketleft)) {
 +                            break;
 +                        }
-+
-                         return keyEvent.filterAndAccept();
+                         keyEvent.filterAndAccept();
+                         return;
                      }
-                     idx++;
-@@ -1995,6 +2004,9 @@
+@@ -2264,6 +2271,9 @@
      if (!canTrigger()) {
          return false;
      }
