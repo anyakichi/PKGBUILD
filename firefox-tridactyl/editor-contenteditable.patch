@@ -1,0 +1,38 @@
+diff --git a/src/excmds.ts b/src/excmds.ts
+index 933e8c96..fab05b86 100644
+--- a/src/excmds.ts
++++ b/src/excmds.ts
+@@ -365,14 +365,31 @@ export async function editor() {
+     const useHtml = await config.getAsync("editorusehtml") == "true"
+     try {
+         const editor = getEditor(elem, { preferHTML: useHtml })
+-        const text = await editor.getContent()
++        let text = ""
++        if (elem.classList.contains("ql-editor") || elem.classList.contains("ProseMirror")) {
++            for (let i = 0; i < elem.children.length; i++) {
++                if (i > 0) {
++                    text += "\n";
++                }
++                text += elem.children[i].textContent;
++            }
++        } else {
++            text = await editor.getContent()
++        }
+         const pos = await editor.getCursor()
+ 
+         const file = (await Native.temp(text, document.location.hostname)).content
+         const exec = await Native.editor(file, ...pos)
+ 
+         if (exec.code == 0) {
+-            await editor.setContent(exec.content)
++            if (elem.classList.contains("ql-editor")) {
++                elem.textContent = exec.content
++            } else if (elem.classList.contains("ProseMirror")) {
++                elem.innerHTML = exec.content.split("\n").map(line =>
++                    line === "" ? "<p><br></p>" : `<p>${line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;")}</p>`).join("\n")
++            } else {
++                await editor.setContent(exec.content)
++            }
+             // TODO: ask the editor nicely where its cursor was left and use that
+             //          for now just try to put it where it started at
+             await editor.setCursor(...pos)
